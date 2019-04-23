@@ -1,0 +1,95 @@
+.container {
+  text-align: center;
+  padding: 1em;
+}
+
+.logo {
+  width: 150px;
+  margin: 0 auto;
+}
+
+q {
+  font-style: italic;
+  quotes: "« " " »";
+}
+
+mat-grid-tile {
+  background-color: #e8e8e8;
+}
+
+.centerBlock {
+  align-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.requirement_field {
+  float: left;
+}
+.requirement_value {
+  float: right;
+}
+
+.requirement_container {
+  width: 400px;
+}
+
+.data_container {
+  height: 450px;
+}
+
+.requirement_header {
+  margin-top: 20px;
+}
+
+.data_container_2 {
+  margin-top: 20px;
+}
+
+#requirements_container {
+  width: 100px;
+}
+
+#requirements_data_container {
+  height: 620px;
+}
+
+#requirements_data_container_2 {
+  height: 632px;
+}
+
+.compliant {
+  color: #289b22;
+}
+
+.not_compliant {
+  color: #ad0000;
+}
+
+.status_container {
+  margin-top: 50px;
+}
+
+.status_field_container {
+  padding-top: 20px;
+}
+
+.number_card_bottom {
+  margin-top: -50px;
+}
+
+#requirements_second_row {
+  margin-top: 70px;
+}
+
+.left_status {
+  margin-left: 25px;
+}
+
+.right_status {
+  margin-right: 30px;
+}

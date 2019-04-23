@@ -1,0 +1,115 @@
+<div class="container">
+  <div>
+    <div>
+      <!--
+      <div>
+        <select id="application">
+          <option (click)="navigate()" *ngFor="let application of applications" value="{{ application['id'] }}">{{ application['application_name'] }}</option>
+        </select>
+      </div>
+          -->
+      <mat-card class="client_container">
+        <button mat-raised-button routerLink="/addclient">Add Client</button>
+      </mat-card>
+
+      <mat-card *ngFor="let client of clients" class="client_container">
+        <mat-card-title>Client Name: {{ client['client_name'] }}</mat-card-title>
+        <mat-card-content>
+          <button mat-raised-button (click)="removeClient(client['client_name'])">Remove Client</button>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Applications:</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngIf="client['applications']">
+              <div *ngFor="let application of client['applications']; let i = index" class="row application_container">
+                <div class="application_field">Application Name: {{ application['application_name'] }}</div>
+                <div class="application_field">Application Host Name: {{ application['host_name'] }}</div>
+
+                <div class="col-sm-10 sub_fields_cont">
+                  <mat-form-field>
+                    <input id="{{ application['id'] }}_phone_number_{{ i }}" matInput placeholder="Phone number" />
+                  </mat-form-field>
+                  <button mat-button (click)="subscribeText(application['id'], i)">Subscribe via Text</button>
+                  <mat-form-field>
+                    <input id="{{ application['id'] }}_email_{{ i }}" matInput placeholder="Email" />
+                  </mat-form-field>
+                  <button mat-button (click)="subscribeEmail(application['id'], i)">Subscribe via Email</button>
+                </div>
+
+                <div class="col-sm-2 remove_button_cont">
+                  <button
+                    class="remove_application_button"
+                    mat-raised-button
+                    (click)="removeApplication(application['id'])"
+                  >
+                    Remove Application
+                  </button>
+                </div>
+
+                <mat-divider [inset]="true"></mat-divider>
+              </div>
+            </div>
+            <mat-action-row>
+              <button mat-raised-button (click)="addApplication(client)">Add Application</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Requirements:</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngFor="let application of client['applications']">
+              <div *ngFor="let requirement of application['requirements']" class="requirement_container">
+                <div class="requirement_field">
+                  Target Application ID: <span>{{ requirement['application_id'] }}</span>
+                </div>
+                <div class="requirement_field">
+                  SLA Type: <span>{{ requirement['sla_type'] }}</span>
+                </div>
+                <div class="requirement_field">
+                  Target Value:
+                  <span
+                    >{{ requirement['target_value'] }}<span *ngIf="requirement['sla_type'] == 'response_time'"> ms</span
+                    ><span *ngIf="requirement['sla_type'] == 'uptime'">%</span></span
+                  >
+                </div>
+                <div class="requirement_field">
+                  Target Threshold:
+                  <span
+                    >{{ requirement['target_threshold']
+                    }}<span *ngIf="requirement['sla_type'] == 'response_time'"> ms</span
+                    ><span *ngIf="requirement['sla_type'] == 'uptime'">%</span></span
+                  >
+                </div>
+                <div class="requirement_field">
+                  Period: <span *ngIf="requirement['sla_type'] == 'response_time'">Day</span
+                  ><span *ngIf="requirement['sla_type'] == 'uptime'">Month</span>
+                </div>
+                <button mat-raised-button (click)="removeRequirement(requirement['id'])">Remove Requirement</button>
+                <mat-divider [inset]="true"></mat-divider>
+              </div>
+            </div>
+            <mat-action-row>
+              <button mat-raised-button (click)="addRequirement(client['id'])">Add Requirement</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div *ngIf="add_application_client">
+      <p>Add Application for Client with ID: {{ add_application_client['id'] }}</p>
+      <div>
+        <select id="application_select">
+          <option *ngFor="let application of applications" value="{{ application['id'] }}">{{
+            application['application_name']
+          }}</option>
+        </select>
+      </div>
+      <button (click)="submitApplication()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<mat-spinner class="centerBlock" *ngIf="!(clients && applications)"></mat-spinner>

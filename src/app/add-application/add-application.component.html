@@ -1,0 +1,15 @@
+<div class="container">
+  <mat-card>
+    <mat-card-title *ngIf="client">Add Application for Client: {{ client['client_name'] }}</mat-card-title>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-select [(value)]="application_id" class="select" placeholder="application">
+          <mat-option *ngFor="let application of applications" value="{{ application['id'] }}">{{
+            application['application_name']
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button (click)="add()">Submit</button>
+    </mat-card-content>
+  </mat-card>
+</div>

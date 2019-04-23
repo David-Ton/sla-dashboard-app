@@ -1,0 +1,183 @@
+<div class="container" rowHeight="2:1">
+  <mat-card>
+    <mat-form-field>
+      <mat-select [(value)]="client_id" placeholder="client" (selectionChange)="setClient()">
+        <mat-option *ngFor="let client of clients" value="{{ client['id'] }}">{{ client['client_name'] }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="client_id">
+      <mat-select
+        (selectionChange)="displayData()"
+        [(value)]="application_id"
+        placeholder="{{ client['placeholder'] }}"
+      >
+        <mat-option *ngFor="let application of client['applications']" value="{{ application['id'] }}">{{
+          application['application_name']
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
+  <mat-card id="data_card" *ngIf="data">
+    <mat-card-title>Data</mat-card-title>
+    <mat-card-content>
+      <button mat-raised-button [matMenuTriggerFor]="menu">Display</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="setChoice('ratio')">Ratios</button>
+        <button mat-menu-item (click)="setChoice('times')">Uptimes</button>
+        <button mat-menu-item (click)="setChoice('response')">Response Times</button>
+      </mat-menu>
+      <div *ngIf="choice == 'ratio' || choice == 'times'">
+        <div class="date_fields">
+          <mat-form-field>
+            <input
+              matInput
+              [matDatepicker]="start_picker"
+              placeholder="Start Date Selection"
+              (dateChange)="filter()"
+              id="start_date_input"
+            />
+            <mat-datepicker-toggle matSuffix [for]="start_picker"></mat-datepicker-toggle>
+            <mat-datepicker #start_picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field>
+            <input
+              matInput
+              [matDatepicker]="end_picker"
+              placeholder="End Date Selection"
+              (dateChange)="filter()"
+              id="end_date_input"
+            />
+            <mat-datepicker-toggle matSuffix [for]="end_picker"></mat-datepicker-toggle>
+            <mat-datepicker #end_picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div *ngIf="choice == 'response'">
+        <div class="date_fields">
+          <mat-form-field>
+            <input
+              matInput
+              [matDatepicker]="date_picker"
+              placeholder="Date Selection"
+              (dateChange)="filter()"
+              id="date_input"
+            />
+            <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+            <mat-datepicker #date_picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="choice == 'ratio'">
+          <h1>Uptimes Ratio</h1>
+          <ngx-charts-line-chart
+            *ngIf="start && end_date && uptimes_ratio_chart_data[0]['series'][0]"
+            [view]="uptimes_chart_options['view']"
+            [scheme]="colorScheme"
+            [results]="uptimes_ratio_chart_data"
+            [gradient]="uptimes_chart_options['gradient']"
+            [xAxis]="uptimes_chart_options['showXAxis']"
+            [yAxis]="uptimes_chart_options['showYAxis']"
+            [legend]="uptimes_chart_options['showLegend']"
+            [showXAxisLabel]="uptimes_chart_options['showXAxisLabel']"
+            [showYAxisLabel]="uptimes_chart_options['showYAxisLabel']"
+            [xAxisLabel]="uptimes_chart_options['xAxisLabel']"
+            [yAxisLabel]="uptimes_chart_options['yAxisLabel']"
+            [autoScale]="uptimes_chart_options['autoScale']"
+            [timeline]="uptimes_chart_options['timeline']"
+            [yScaleMin]="uptimes_chart_options['yScaleMin']"
+            [yScaleMax]="uptimes_chart_options['yScaleMax']"
+          >
+          </ngx-charts-line-chart>
+          <div *ngIf="start && end_date && uptimes_ratio_chart_data[0]['series'][0]">
+            <mat-form-field>
+              <mat-select
+                (selectionChange)="setRequirements()"
+                [(value)]="uptime_requirement_id"
+                placeholder="uptime requirements"
+              >
+                <mat-option
+                  *ngFor="let requirement of selected_application['uptime_requirements']"
+                  value="{{ requirement['id'] }}"
+                  >{{ requirement['id'] }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <div *ngIf="uptime_requirement">
+              <p>Requirement ID: {{ uptime_requirement['id'] }}</p>
+              <p>Description: {{ uptime_requirement['description'] }}</p>
+              <p>Threshold Value: {{ uptime_requirement['target_threshold'] }}%</p>
+              <p>Target Value: {{ uptime_requirement['target_value'] }}%</p>
+            </div>
+          </div>
+          <p *ngIf="!(end_date && uptimes_ratio_chart_data[0]['series'][0])">No Data to Display</p>
+        </div>
+        <div *ngIf="choice == 'times'">
+          <h1>Times Data</h1>
+          <ngx-charts-line-chart
+            *ngIf="start && end_date && times_chart_data[0]['series'][0]"
+            [view]="uptimes_data_chart_options['view']"
+            [scheme]="colorScheme"
+            [results]="times_chart_data"
+            [gradient]="uptimes_data_chart_options['gradient']"
+            [xAxis]="uptimes_data_chart_options['showXAxis']"
+            [yAxis]="uptimes_data_chart_options['showYAxis']"
+            [legend]="uptimes_data_chart_options['showLegend']"
+            [showXAxisLabel]="uptimes_data_chart_options['showXAxisLabel']"
+            [showYAxisLabel]="uptimes_data_chart_options['showYAxisLabel']"
+            [xAxisLabel]="uptimes_data_chart_options['xAxisLabel']"
+            [yAxisLabel]="uptimes_data_chart_options['yAxisLabel']"
+            [autoScale]="uptimes_data_chart_options['autoScale']"
+            [timeline]="uptimes_data_chart_options['timeline']"
+          >
+          </ngx-charts-line-chart>
+          <p *ngIf="!(end_date && times_chart_data[0]['series'][0])">No Data to Display</p>
+        </div>
+        <div *ngIf="choice == 'response'">
+          <h1>Average Response Times Data</h1>
+          <ngx-charts-line-chart
+            *ngIf="date && response_times_chart_data[0]['series'][0]"
+            [view]="response_times_data_chart_options['view']"
+            [scheme]="colorScheme"
+            [results]="response_times_chart_data"
+            [gradient]="response_times_data_chart_options['gradient']"
+            [xAxis]="response_times_data_chart_options['showXAxis']"
+            [yAxis]="response_times_data_chart_options['showYAxis']"
+            [legend]="response_times_data_chart_options['showLegend']"
+            [showXAxisLabel]="response_times_data_chart_options['showXAxisLabel']"
+            [showYAxisLabel]="response_times_data_chart_options['showYAxisLabel']"
+            [xAxisLabel]="response_times_data_chart_options['xAxisLabel']"
+            [yAxisLabel]="Hello!"
+            [autoScale]="response_times_data_chart_options['autoScale']"
+            [timeline]="response_times_data_chart_options['timeline']"
+          >
+          </ngx-charts-line-chart>
+          <div *ngIf="date && response_times_chart_data[0]['series'][0]">
+            <mat-form-field>
+              <mat-select
+                (selectionChange)="setRequirements()"
+                [(value)]="response_time_requirement_id"
+                placeholder="response time requirements"
+              >
+                <mat-option
+                  *ngFor="let requirement of selected_application['response_time_requirements']"
+                  value="{{ requirement['id'] }}"
+                  >{{ requirement['id'] }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <div *ngIf="response_time_requirement">
+              <p>Requirement ID: {{ response_time_requirement['id'] }}</p>
+              <p>Description: {{ response_time_requirement['description'] }}</p>
+              <p>Threshold Value: {{ response_time_requirement['target_threshold'] }}ms</p>
+              <p>Target Value: {{ response_time_requirement['target_value'] }}ms</p>
+            </div>
+          </div>
+          <p *ngIf="!(date && response_times_chart_data[0]['series'][0])">No Data to Display</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<mat-spinner class="centerBlock" *ngIf="!(clients && applications)"></mat-spinner>

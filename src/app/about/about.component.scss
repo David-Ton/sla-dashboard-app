@@ -1,0 +1,51 @@
+.container {
+  text-align: center;
+  padding: 1rem;
+}
+
+.mat-icon {
+  vertical-align: middle;
+}
+
+.client_container {
+  margin-bottom: 20px;
+}
+
+.requirement_container,
+.application_container {
+  text-align: left;
+}
+
+.requirement_field,
+.application_field {
+  margin-left: 10px;
+}
+
+/*.remove_application_button {
+  align: right;
+}*/
+
+.sub_fields_cont {
+  align: left;
+  padding-top: 4px;
+}
+
+.remove_button_cont {
+  align: right;
+  padding-top: 10px;
+}
+
+mat-divider {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.centerBlock {
+  align-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}

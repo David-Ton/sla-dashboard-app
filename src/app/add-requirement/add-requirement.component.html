@@ -1,0 +1,40 @@
+<div class="container">
+  <mat-card>
+    <mat-card-title>Add Requirement for Client with ID: {{ client_id }}</mat-card-title>
+    <mat-card-content>
+      <div>
+        <mat-form-field>
+          <mat-select [(value)]="application_id" class="select" placeholder="application">
+            <mat-option *ngFor="let application of applications" value="{{ application['id'] }}">{{
+              application['application_name']
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput id="requirement_description_input" placeholder="Description" type="text" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-select placeholder="SLA Type" [(value)]="sla_type" id="requirement_sla_type_input">
+            <mat-option value="uptime">Uptime</mat-option>
+            <mat-option value="response_time">Response Time</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput id="requirement_target_value_input" placeholder="Target Value" type="text" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput id="requirement_threshold_value_input" placeholder="Threshold Value" type="text" />
+        </mat-form-field>
+      </div>
+      <button mat-raised-button (click)="submitRequirement()" id="requirement_submit">Submit</button>
+    </mat-card-content>
+  </mat-card>
+</div>

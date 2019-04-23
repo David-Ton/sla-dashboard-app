@@ -1,0 +1,424 @@
+<div class="container" rowHeight="2:1">
+  <div class="row">
+    <div class="col-sm-12">
+      <mat-card>
+        <mat-form-field>
+          <mat-select [(value)]="client_id" placeholder="client" (selectionChange)="setClient()">
+            <mat-option *ngFor="let client of clients" value="{{ client['id'] }}">{{
+              client['client_name']
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="client_id">
+          <mat-select
+            (selectionChange)="displayData()"
+            [(value)]="application_id"
+            placeholder="{{ client['placeholder'] }}"
+          >
+            <mat-option *ngFor="let application of client['applications']" value="{{ application['id'] }}">{{
+              application['application_name']
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card>
+    </div>
+  </div>
+  <div *ngIf="application && application['uptime_requirements'][0]" class="row">
+    <div class="container-fluid" *ngIf="application_id">
+      <div class="row">
+        <div class="col-sm-4">
+          <mat-card class="data_container_2">
+            <mat-card-title>
+              Requirements Summary
+            </mat-card-title>
+            <mat-card-content id="requirements_data_container">
+              <div>
+                <p class="requirement_header">Uptime</p>
+                <mat-list>
+                  <mat-list-item>
+                    <div class="requirement_container">
+                      <span class="requirement_field">Target</span>
+                      <span class="requirement_value"
+                        >{{ application['uptime_requirements'][0]['target_value'] }}%</span
+                      >
+                    </div>
+                  </mat-list-item>
+                  <mat-divider [inset]="true"></mat-divider>
+                  <mat-list-item>
+                    <div class="requirement_container">
+                      <span class="requirement_field">Threshold</span>
+                      <span class="requirement_value"
+                        >{{ application['uptime_requirements'][0]['target_threshold'] }}%</span
+                      >
+                    </div>
+                  </mat-list-item>
+                  <mat-divider [inset]="true"></mat-divider>
+                  <mat-list-item>
+                    <div class="requirement_container">
+                      <span class="requirement_field">Period</span>
+                      <span class="requirement_value">Month</span>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider [inset]="true"></mat-divider>
+                  <mat-list-item>
+                    <div class="row status_container requirement_container">
+                      <div class="col-sm-3 status_field_container">
+                        <span class="requirement_field">Status</span>
+                      </div>
+
+                      <!--
+  <span class="requirement_value"><span *ngIf="uptime_compliance" class="compliant">Compliant</span><span *ngIf="!uptime_compliance" class="not_compliant">Not Compliant</span></span>
+      -->
+                      <div class="col-sm-9">
+                        <ngx-charts-linear-gauge
+                          [view]="uptime_linear_options['view']"
+                          [value]="uptime_linear_options['value']"
+                          [previousValue]="uptime_linear_options['previousValue']"
+                          [units]="uptime_linear_options['units']"
+                          [scheme]="uptime_linear_options['scheme']"
+                        >
+                        </ngx-charts-linear-gauge>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                </mat-list>
+
+                <div id="requirements_second_row">
+                  <p class="requirement_header">Response Time</p>
+                  <mat-list>
+                    <mat-list-item>
+                      <div class="requirement_container">
+                        <span class="requirement_field">Target</span>
+                        <span class="requirement_value"
+                          >{{ application['response_time_requirements'][0]['target_value'] }}ms</span
+                        >
+                      </div>
+                    </mat-list-item>
+                    <mat-divider [inset]="true"></mat-divider>
+                    <mat-list-item>
+                      <div class="requirement_container">
+                        <span class="requirement_field">Threshold</span>
+                        <span class="requirement_value"
+                          >{{ application['response_time_requirements'][0]['target_threshold'] }}ms</span
+                        >
+                      </div>
+                    </mat-list-item>
+                    <mat-divider [inset]="true"></mat-divider>
+                    <mat-list-item>
+                      <div class="requirement_container">
+                        <span class="requirement_field">Period</span>
+                        <span class="requirement_value">Day</span>
+                      </div>
+                    </mat-list-item>
+                    <mat-divider [inset]="true"></mat-divider>
+                    <mat-list-item>
+                      <div class="row status_container requirement_container">
+                        <div class="col-sm-3 status_field_container">
+                          <span class="requirement_field">Status</span>
+                        </div>
+                        <div class="col-sm-9">
+                          <!--
+          <span class="requirement_value"><span *ngIf="response_compliance" class="compliant">Compliant</span><span *ngIf="!response_compliance" class="not_compliant">Not Compliant</span></span>
+              -->
+                          <ngx-charts-linear-gauge
+                            [view]="response_linear_options['view']"
+                            [value]="response_linear_options['value']"
+                            [max]="response_linear_options['max']"
+                            [previousValue]="response_linear_options['previousValue']"
+                            [units]="response_linear_options['units']"
+                            [scheme]="response_linear_options['scheme']"
+                          >
+                          </ngx-charts-linear-gauge>
+                        </div>
+                      </div>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-sm-8">
+          <mat-card class="data_container_2">
+            <mat-card-title>SLA Status for {{ current_month }} {{ current_year }}</mat-card-title>
+            <mat-card-content id="requirements_data_container_2">
+              <div class="row">
+                <p>Daily Requirement Compliance</p>
+                <ngx-charts-advanced-pie-chart
+                  [view]="sla_status_chart_options['view']"
+                  [results]="sla_status_chart_data"
+                  [scheme]="slaColorScheme"
+                  [label]="sla_status_chart_options['label']"
+                >
+                </ngx-charts-advanced-pie-chart>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <p>Misses Breadown</p>
+                  <ngx-charts-bar-vertical
+                    [view]="sla_misses_chart_options['view']"
+                    [results]="sla_misses_chart_data"
+                    [scheme]="missesColorScheme"
+                    [xAxis]="sla_misses_chart_options['xAxis']"
+                    [yAxis]="sla_misses_chart_options['yAxis']"
+                    [showXAxisLabel]="sla_misses_chart_options['showXAxisLabel']"
+                    [showYAxisLabel]="sla_misses_chart_options['showYAxisLabel']"
+                    [xAxisLabel]="sla_misses_chart_options['xAxisLabel']"
+                    [yAxisLabel]="sla_misses_chart_options['yAxisLabel']"
+                  >
+                  </ngx-charts-bar-vertical>
+                </div>
+                <div class="col-sm-6">
+                  <p>Threshold Breadown</p>
+                  <ngx-charts-bar-vertical
+                    [view]="sla_threshold_chart_options['view']"
+                    [results]="sla_threshold_chart_data"
+                    [scheme]="thresholdColorScheme"
+                    [xAxis]="sla_threshold_chart_options['xAxis']"
+                    [yAxis]="sla_threshold_chart_options['yAxis']"
+                    [showXAxisLabel]="sla_threshold_chart_options['showXAxisLabel']"
+                    [showYAxisLabel]="sla_threshold_chart_options['showYAxisLabel']"
+                    [xAxisLabel]="sla_threshold_chart_options['xAxisLabel']"
+                    [yAxisLabel]="sla_threshold_chart_options['yAxisLabel']"
+                  >
+                  </ngx-charts-bar-vertical>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="uptimes_ratio_chart_data">
+        <div class="col-sm-12">
+          <mat-card class="data_container data_container_2">
+            <mat-card-title>Uptimes Data</mat-card-title>
+            <mat-card-content>
+              <div class="row">
+                <div class="col-sm-8">
+                  <!--
+          <ngx-charts-gauge [view]="uptimes_ratio_gauge_options['view']"
+                            [min]="uptimes_ratio_gauge_options['min']"
+                            [max]="uptimes_ratio_gauge_options['max']"
+                            [units]="uptimes_ratio_gauge_options['units']"
+                            [scheme]="uptimesColorScheme"
+                            [results]="uptimes_ratio_gauge_data"
+                            [valueFormatting]="uptimes_ratio_formatting">
+            <ng-template #tooltipTemplate let-model="model">
+              <p>{{model['name']}}</p>
+              <pre>{{model['value']}}%</pre>
+            </ng-template>
+          </ngx-charts-gauge>
+              -->
+                  <ngx-charts-line-chart
+                    [view]="uptimes_chart_options['view']"
+                    [scheme]="uptimesChartColorScheme"
+                    [results]="uptimes_ratio_chart_data"
+                    [gradient]="uptimes_chart_options['gradient']"
+                    [xAxis]="uptimes_chart_options['showXAxis']"
+                    [yAxis]="uptimes_chart_options['showYAxis']"
+                    [legend]="uptimes_chart_options['showLegend']"
+                    [showXAxisLabel]="uptimes_chart_options['showXAxisLabel']"
+                    [showYAxisLabel]="uptimes_chart_options['showYAxisLabel']"
+                    [xAxisLabel]="uptimes_chart_options['xAxisLabel']"
+                    [yAxisLabel]="uptimes_chart_options['yAxisLabel']"
+                    [autoScale]="uptimes_chart_options['autoScale']"
+                    [timeline]="uptimes_chart_options['timeline']"
+                    [yScaleMin]="uptimes_chart_options['yScaleMin']"
+                    [yScaleMax]="uptimes_chart_options['yScaleMax']"
+                  >
+                  </ngx-charts-line-chart>
+                  <!--
+          <div *ngIf="!uptimes_ratio_gauge_data">
+            <p>No Data to Display</p>
+          </div>
+              -->
+                </div>
+                <div class="col-sm-4">
+                  <div>
+                    <mat-checkbox (click)="toggleUptimes()">Show Requirements</mat-checkbox>
+                  </div>
+                  <div *ngIf="uptimes_number_cards_data[0]">
+                    <div>
+                      <ngx-charts-number-card
+                        [view]="uptimes_number_cards_options['view']"
+                        [cardColor]="uptimes_number_cards_options['cardColor']"
+                        [textColor]="uptimes_number_cards_options['textColor']"
+                        [scheme]="uptimeCardsColorScheme"
+                        [results]="uptimes_number_cards_data"
+                      ></ngx-charts-number-card>
+                    </div>
+                    <div>
+                      <ngx-charts-number-card
+                        [view]="uptimes_number_cards_options['view']"
+                        [cardColor]="uptimes_number_cards_options['cardColor']"
+                        [textColor]="uptimes_number_cards_options['textColor_2']"
+                        [scheme]="uptimeCardsColorScheme_2"
+                        [results]="uptimes_number_cards_data_2"
+                      ></ngx-charts-number-card>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <span
+                          class="left_status"
+                          *ngIf="uptimes_number_cards_options['textColor_2'] == '#289b22'"
+                          style="color: #289b22;"
+                          >Compliant</span
+                        >
+                        <span
+                          class="left_status"
+                          *ngIf="uptimes_number_cards_options['textColor_2'] == '#e02323'"
+                          style="color: #e02323;"
+                          >Not Compliant</span
+                        >
+                      </div>
+                      <div class="col-sm-6">
+                        <span
+                          class="right_status"
+                          *ngIf="uptimes_number_cards_options['textColor_2'] == '#289b22'"
+                          style="color: #289b22;"
+                          >Compliant</span
+                        >
+                        <span
+                          class="right_status"
+                          *ngIf="uptimes_number_cards_options['textColor_2'] == '#e02323'"
+                          style="color: #e02323;"
+                          >Not Compliant</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <div class="row" *ngIf="response_times_chart_data">
+        <div class="col-sm-12">
+          <mat-card class="data_container data_container_2">
+            <mat-card-title>Response Times Data</mat-card-title>
+            <mat-card-content>
+              <div class="row">
+                <div class="col-sm-8">
+                  <ngx-charts-line-chart
+                    [view]="response_times_data_chart_options['view']"
+                    [scheme]="responseChartColorScheme"
+                    [results]="response_times_chart_data"
+                    [gradient]="response_times_data_chart_options['gradient']"
+                    [xAxis]="response_times_data_chart_options['showXAxis']"
+                    [yAxis]="response_times_data_chart_options['showYAxis']"
+                    [legend]="response_times_data_chart_options['showLegend']"
+                    [showXAxisLabel]="response_times_data_chart_options['showXAxisLabel']"
+                    [showYAxisLabel]="response_times_data_chart_options['showYAxisLabel']"
+                    [xAxisLabel]="response_times_data_chart_options['xAxisLabel']"
+                    [yAxisLabel]="response_times_data_chart_options['yAxisLabel']"
+                    [autoScale]="response_times_data_chart_options['autoScale']"
+                    [timeline]="response_times_data_chart_options['timeline']"
+                    [yScaleMin]="response_times_data_chart_options['yScaleMin']"
+                    [yScaleMax]="response_times_data_chart_options['yScaleMax']"
+                  >
+                  </ngx-charts-line-chart>
+                  <!--
+            <ngx-charts-gauge [view]="response_times_gauge_options['view']"
+                              [min]="response_times_gauge_options['min']"
+                              [max]="response_times_gauge_options['max']"
+                              [units]="response_times_gauge_options['units']"
+                              [scheme]="responseChartColorScheme"
+                              [results]="response_times_gauge_data"
+                              [valueFormatting]="response_times_formatting">
+              <ng-template #tooltipTemplate let-model="model">
+
+                <p>{{model['name']}}</p>
+                <pre>{{model['value']}}ms</pre>
+              </ng-template>
+            </ngx-charts-gauge>
+
+            <div *ngIf="!response_times_gauge_data">
+              <p>No Data to Display</p>
+            </div>
+                --></div>
+                <div class="col-sm-4">
+                  <div>
+                    <mat-checkbox (click)="toggleResponse()">Show Requirements</mat-checkbox>
+                  </div>
+                  <div *ngIf="response_number_cards_data[0]">
+                    <div>
+                      <ngx-charts-number-card
+                        [view]="response_number_cards_options['view']"
+                        [cardColor]="response_number_cards_options['cardColor']"
+                        [textColor]="response_number_cards_options['textColor']"
+                        [scheme]="responseCardsColorScheme"
+                        [results]="response_number_cards_data"
+                      ></ngx-charts-number-card>
+                    </div>
+                    <div>
+                      <ngx-charts-number-card
+                        *ngIf="response_number_cards_data_2[0]"
+                        [view]="response_number_cards_options['view']"
+                        [cardColor]="response_number_cards_options['cardColor']"
+                        [textColor]="response_number_cards_options['textColor_2']"
+                        [scheme]="responseCardsColorScheme_2"
+                        [results]="response_number_cards_data_2"
+                      ></ngx-charts-number-card>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <span
+                          class="left_status"
+                          *ngIf="response_number_cards_options['textColor_2'] == '#289b22'"
+                          style="color: #289b22;"
+                          >Compliant</span
+                        >
+                        <span
+                          class="left_status"
+                          *ngIf="response_number_cards_options['textColor_2'] == '#e02323'"
+                          style="color: #e02323;"
+                          >Not Compliant</span
+                        >
+                      </div>
+                      <div class="col-sm-6">
+                        <span
+                          class="right_status"
+                          *ngIf="response_number_cards_options['textColor_2'] == '#289b22'"
+                          style="color: #289b22;"
+                          >Compliant</span
+                        >
+                        <span
+                          class="right_status"
+                          *ngIf="response_number_cards_options['textColor_2'] == '#e02323'"
+                          style="color: #e02323;"
+                          >Not Compliant</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+    <!--
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-10" *ngIf="number_cards_data[0]">
+      <ngx-charts-number-card [view]="number_cards_options['view']"
+                              [cardColor]="number_cards_options['cardColor']"
+                              [textColor]="number_cards_options['textColor']"
+                              [valueFormatting]="cards_value_formatting"
+                              [scheme]="cardsColorScheme"
+                              [results]="number_cards_data">
+        <ng-template #tooltipTemplate let-model="model">
+          <p>{{model['name']}}</p>
+          <pre>{{model['value']}}ms</pre>
+        </ng-template>
+      </ngx-charts-number-card>
+    </div>
+  </div>
+      -->
+  </div>
+</div>
+
+<mat-spinner class="centerBlock" *ngIf="!(clients && applications)"></mat-spinner>
